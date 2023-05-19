@@ -32,14 +32,14 @@ public class MemberServlet extends HttpServlet {
 	}
 
 	private void doHandle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-		request.setCharacterEncoding("utf-8");
-		response.setContentType("text/html;charset=utf-8");
-		
 		MemberDAO dao = new MemberDAO();
+		
 		List membersList = dao.selectAllMemberList();
-		// MemberDAO 객체를 생성하고 selectAllMemberList()를 호출한다.
+		// 조회한 회웑 정보를 List에 저장한다.
 		
 		request.setAttribute("membersList", membersList);
+		// 조회한 회원 정보를 바인딩하고 JSP로 포워딩한다.
+		
 		RequestDispatcher dispatch = request.getRequestDispatcher("test01/listMembers.jsp");
 		dispatch.forward(request, response);
 		

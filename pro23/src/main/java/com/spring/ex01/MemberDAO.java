@@ -34,12 +34,14 @@ public class MemberDAO {
 		SqlSession session = sqlMapper.openSession();
 		// 실제 member.xml의 SQL문을 호출하는 데 사용되는 SqlSession 객체를 가져온다.
 		
-		List<MemberVO> memlist = null;
+		//List<MemberVO> memlist = null;
+		List<MemberVO> membersList = null;
 		
-		memlist = session.selectList("mapper.member.selectAllMemberList");
-		// 여러 개의 레코드를 조회하므로 selectList()메서드에 실행하고자 하는 SQL문의 id를 인자로 전달한다.
+		membersList = session.selectList("mapper.member.selectAllMemberList");
+		// 모든 회원 정보를 조회한다.
 		
-		return memlist;
+		return membersList;
 	}
+	
 	
 }
