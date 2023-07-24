@@ -70,6 +70,16 @@
 		<!-- SQL문 실행 시 매개변수 이름을 pwd의 조건 값으로 사용한다. -->
 	</select>
 	
+	
+	<!-- MemberDAO에서 회원 정보를 memberVO의 속성에 저장해서 넘긴다. -->
+	<insert id="insertMember" parameterType="memberVO"> 
+		<![CDATA[
+			insert into t_member(id, pwd, name, email)
+			values(#{id}, #{pwd}, #{name}, #{email})
+		]]>
+	</insert>
+	<!-- memerVO의 속성 이름에 저장된 값을 value로 설정한다. -->
+	
 </mapper>
 
 
