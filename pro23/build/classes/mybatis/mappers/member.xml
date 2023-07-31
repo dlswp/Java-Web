@@ -80,6 +80,50 @@
 	</insert>
 	<!-- memerVO의 속성 이름에 저장된 값을 value로 설정한다. -->
 	
+	<!-- MemberDAO에서 회원 정보를 HashMap에 담아서 전달한다. -->
+	<insert id="insertMember2" parameterType="java.util.HashMap">
+		<![CDATA[
+			insert into t_member(id,pwd,name,email)
+			values(#{id}, #{pwd}, #{name}, #{email})
+		]]>
+	</insert>
+	<!-- HashMap에 각각의 key로 저장된 value를 가져와 테이블에 추가한다. -->
+	
+	<update id="updateMember" parameterType="memberVO">
+		<![CDATA[
+			update t_member
+			set pwd=#{pwd}, name=#{name}, email=#{email}
+			where 
+			id = #{id}
+		]]>
+	</update>
+	
+	<!-- 회원 ID는 문자열이므로 parameterType을 String으로 설정합니다. -->
+	<delete id="deleteMember" parameterType="String">
+		<![CDATA[
+			delete from t_member
+			where
+			id = #{id}
+		]]>
+	</delete>
+	<!-- 전달된 ID를 조건 값으로 해당 회원 정보를 삭제합니다. -->
+	
+	
+	<select id="searchMember" parameterType="memberVO" resultMap="memResult">
+		<![CDATA[
+			select * from t_member
+		]]>
+		<where>
+			<if test="name != '' and name != null">
+				name = #{name}
+			</if>
+			<if test="email != '' and email != null">
+				and email = #{email}
+			</if>
+		</where>
+		order by joinDate desc
+	</select>
+	
 </mapper>
 
 

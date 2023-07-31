@@ -2,6 +2,7 @@ package com.spring.ex04;
 
 import java.io.Reader;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -91,6 +92,53 @@ public class MemberDAO {
 		// 수동 커밋이므로 반드시 commit() 메서드를 호출하여 영구 반영한다.
 		
 		return result;
+	}
+	
+	public int insertMember2(Map<String,String> memberMap) {
+		sqlMapper = getInstance();
+		SqlSession session = sqlMapper.openSession();
+		
+		int result = session.insert("mapper.member.insertMember2", memberMap);
+		// 지정한 id의 SQL문에 memberVO의 값을 전달하여 회원 정보를 테이블에 추가한다.
+		
+		session.commit();
+		// 수동 커밋이므로 반드시 commit() 메서드를 호출하여 영구 반영한다.
+		
+		return result;
+	}
+	
+	public int updateMember(MemberVO memberVO) {
+		sqlMapper = getInstance();
+		SqlSession session = sqlMapper.openSession();
+		
+		int result = session.update("mapper.member.updateMember", memberVO);
+		// 지정한 id의 SQL문에 memberVO의 값을 전달하여 회원 정보를 테이블에 추가한다.
+		
+		session.commit();
+		// 수동 커밋이므로 반드시 commit() 메서드를 호출하여 영구 반영한다.
+		
+		return result;
+	}
+	
+	public int deleteMember(String id) {
+		sqlMapper = getInstance();
+		SqlSession session = sqlMapper.openSession();
+		
+		int result = 0;
+		result = session.delete("mapper.member.deleteMember", id);
+		// 지정한 id의 SQL문에 memberVO의 값을 전달하여 회원 정보를 테이블에 추가한다.
+		
+		session.commit();
+		// 수동 커밋이므로 반드시 commit() 메서드를 호출하여 영구 반영한다.
+		
+		return result;
+	}
+	
+	public List searchMember(MemberVO memberVO) {
+		sqlMapper = getInstance();
+		SqlSession session = sqlMapper.openSession();
+		List list = session.selectList("mapper.member.searchMember", memberVO);
+		return list;
 	}
 	
 	
