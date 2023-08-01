@@ -108,22 +108,142 @@
 	</delete>
 	<!-- 전달된 ID를 조건 값으로 해당 회원 정보를 삭제합니다. -->
 	
+	<!--  
+	<select id="searchMember" parameterType="memberVO" resultMap="memResult">
+		<![CDATA[
+			select * from t_member
+		]]>
+		<where>
+		// <where> 태그를 이용해 SQL문의 where절을 구성한다. 
+		
+			<if test="name != '' and name != null">
+				name = #{name}
+			</if>
+			// name 속성 값을 체크해 공백이 아니거나 null이 아니면 name=name 속성 값 조건절을 공통 SQL문 뒤에 추가한다.
+			
+			<if test="email != '' and email != null">
+				and email = #{email}
+			</if>
+			// email 속성 값을 체크해 공백과 null이 아니면 email=email 속성 값 구문을 공통 SQL문 뒤에 추가한다.
+			
+		</where>
+		order by joinDate desc
+	</select>
+	-->
 	
 	<select id="searchMember" parameterType="memberVO" resultMap="memResult">
 		<![CDATA[
 			select * from t_member
 		]]>
 		<where>
-			<if test="name != '' and name != null">
-				name = #{name}
-			</if>
-			<if test="email != '' and email != null">
-				and email = #{email}
-			</if>
+			<choose>
+				<when test="name != '' and name != null and email != '' and email != null">
+					name = #{name} and email = #{email}
+				</when>
+				<!-- name과 email 속성 값이 모두 있는 경우 name=name 속성 값 and email=email 속성 값 조건식을 where절에 추가한다. -->
+				
+				<when test="name != '' and name != null">
+					name = #{name}
+				</when>
+				<!-- name 속성 값만 있을 경우 name=name 속성 값 조건식을 where절에 추가한다. -->
+				
+				<when test="email != '' and email != null">
+					email = #{email}
+				</when>
+				<!-- email 속성값만 있을경우 email=email 속성 값 조건식을 where절에 추가한다. -->
+				
+			</choose>
 		</where>
 		order by joinDate desc
 	</select>
 	
+	<select id="foreachSelect" resultMap="memResult" parameterType="java.util.Map">
+      <!-- SQL문에 List 인스턴스나 배열을 전달하면 자동으로 Map에 전달되어 이름을 키(key)로 사용한다. List인스턴스는 list를 키로 사용하고 배열은 array를 키로 사용한다. -->
+      
+      <![CDATA[
+        select * from t_member  
+      ]]>
+      where name in
+      
+      <foreach item="item" collection="list" open="(" separator="," close=")" >
+         #{item}
+      </foreach>
+      <!-- foreach문을 이용해 반복해서 list의 값을 표시한다. -->
+      
+      order by joinDate desc
+   </select>
+   
+   <insert id="foreachInsert"  parameterType="java.util.Map">
+   		
+   		<!-- <foreach>로 반복 작업을 할 때는 처음에 INSERT ALL을 추가한다. <foreach>로 반복 작업이 끝난 후 SELECT * FROM DUAL을 마지막에 추가한다. -->
+      <foreach item="item"  collection="list"   open="INSERT ALL" separator=" " close="SELECT * FROM DUAL" >
+          INTO  t_member(id, pwd, name, email)
+          VALUES  (#{item.id},
+                    #{item.pwd},
+                    #{item.name},
+                    #{item.email})
+      </foreach>
+   </insert>
+   
+   <sql id="a">
+    <![CDATA[
+      select * from t_member
+     ]]> 
+   </sql>
+	<!-- <sql>태그를 이용해 공통 SQL문의 refid를 a로 지정한다. -->
+
+  <select id="searchMember" parameterType="memberVO" resultMap="memResult">
+	     <include refid="a" /> 
+	     <!-- <include> 태그를 이용해 공통 SQL문을 재사용한다. -->
+	     
+	   <![CDATA[
+         select * from t_member 
+      ]]>
+	  
+       <where>
+		  <choose>
+		      <when test="name != '' and name != null and  email != '' and email != null">
+			     name=#{name} and email=#{email}
+		      </when>
+		      <when test="name != '' and name != null">
+			     name = #{name}
+		      </when>
+		      <when test="email !='' and email != null">
+			    email = #{email}
+		      </when>
+	      </choose>
+       </where>
+       order by joinDate desc
+   </select>
+   
+   <select id="foreachSelect" resultMap="memResult" parameterType="java.util.Map">
+      <include refid="a" /> 
+      where name in
+      <foreach item="item" collection="list" open="(" separator="," close=")" >
+         #{item}
+      </foreach>
+   </select>
+   
+   <!-- 
+    <select id="selectLike" resultMap="memResult"  parameterType="String" >
+      <![CDATA[
+         select * from t_member
+         where
+         name like '%'#{name}'%'		
+      ]]>
+    </select>
+     -->
+   <!--  like 검색 -->
+   <select id="selectLike" resultMap="memResult"  parameterType="String" >
+      <![CDATA[
+         select * from t_member
+         where
+         name like '%' || #{name} || '%'		
+      ]]>
+    </select>
+   
+   
+   
 </mapper>
 
 

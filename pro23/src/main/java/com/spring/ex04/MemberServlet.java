@@ -2,6 +2,7 @@ package com.spring.ex04;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,7 @@ public class MemberServlet extends HttpServlet {
 		}else if(action.equals("searchMember")) {
 			String name = request.getParameter("name");
 			String email = request.getParameter("email");
+			// 검색창에 입력한 검색 조건을 가져온다
 			
 			memberVO.setName(name);
 			memberVO.setEmail(email);
@@ -112,7 +114,33 @@ public class MemberServlet extends HttpServlet {
 			List membersList = dao.searchMember(memberVO);
 			request.setAttribute("membersList", membersList);
 			nextPage = "test03/listMembers.jsp";
-		}
+		}else if(action.equals("foreachSelect")) {
+			  List<String> nameList = new ArrayList<String>();
+			  nameList.add("홍길동");
+			  nameList.add("차범근");
+			  nameList.add("이순신");
+			  List<MemberVO> membersList=dao.foreachSelect(nameList);
+			  // ArrayList에 검색할 이름을 저장한 후 SQL문으로 ArrayList를 전달한다.
+			  
+			  request.setAttribute("membersList",membersList);
+			  nextPage="test03/listMembers.jsp";
+		}else if(action.equals("foreachInsert")) {
+	          List<MemberVO> memList = new ArrayList<MemberVO>();
+	          memList.add(new MemberVO("m1", "1234", "박길동", "m1@test.com"));
+	          memList.add(new MemberVO("m2", "1234", "이길동", "m2@test.com"));
+	          memList.add(new MemberVO("m3", "1234", "김길동", "m3@test.com"));
+	          // 테이블에 추가할 회원 정보를 memList에 저장한다.
+	          
+	          int result=dao.foreachInsert(memList);
+	          // SQL문으로 memList에 전달한다.
+	          
+	          nextPage="/mem4.do?action=listMembers";
+		    }else if(action.equals("selectLike")) {
+		      String name="길동";
+			  List<MemberVO> membersList=dao.selectLike(name);
+			  request.setAttribute("membersList",membersList);
+			  nextPage="test03/listMembers.jsp";
+		   }
 		
 		RequestDispatcher dispatch = request.getRequestDispatcher(nextPage);
 		dispatch.forward(request, response);

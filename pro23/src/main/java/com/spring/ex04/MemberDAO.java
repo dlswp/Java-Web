@@ -137,9 +137,38 @@ public class MemberDAO {
 	public List searchMember(MemberVO memberVO) {
 		sqlMapper = getInstance();
 		SqlSession session = sqlMapper.openSession();
+		
 		List list = session.selectList("mapper.member.searchMember", memberVO);
+		// 회원 검색창에서 전달된 이름과 나이 값을 memberVO에 설정하여 SQL문으로 전달한다.
+		
 		return list;
 	}
 	
+	public List<MemberVO>  foreachSelect(List nameList){
+        sqlMapper=getInstance();
+        SqlSession session=sqlMapper.openSession();
+        
+        List list=session.selectList("mapper.member.foreachSelect",nameList);
+        // 검색 이름이 저장된 nameList를 SQL문으로 전달한다.
+        
+        return list;		
+    }
 	
+	public int  foreachInsert(List memList){
+        sqlMapper=getInstance();
+        SqlSession session=sqlMapper.openSession();
+        
+        int result = session.insert("mapper.member.foreachInsert",memList);
+        // 회원 정보가 저장된 memList를 SQL문으로 전달한다.
+        
+        session.commit();
+        return result ;		
+     }
+	
+	public List<MemberVO>  selectLike(String name){
+        sqlMapper=getInstance();
+        SqlSession session=sqlMapper.openSession();
+        List list=session.selectList("mapper.member.selectLike",name);
+        return list;		
+    }
 }
